@@ -249,10 +249,7 @@ public:
     crawl() const;
 
     bool
-    cluster() const override
-    {
-        return slot_->cluster();
-    }
+    cluster() const override;
 
     void
     check();

@@ -234,6 +234,12 @@ PeerImp::crawl() const
     return boost::beast::detail::iequals(iter->value(), "public");
 }
 
+bool
+PeerImp::cluster() const
+{
+    return static_cast<bool>(app_.cluster().member(publicKey_));
+}
+
 std::string
 PeerImp::getVersion() const
 {
@@ -1528,7 +1534,7 @@ PeerImp::onMessage (std::shared_ptr <protocol::TMProposeSet> const& m)
 {
     protocol::TMProposeSet& set = *m;
 
-    if (set.has_hops() && ! slot_->cluster())
+    if (set.has_hops() && ! cluster())
         set.set_hops(set.hops() + 1);
 
     auto const sig = makeSlice(set.signature());
@@ -1863,7 +1869,7 @@ PeerImp::onMessage (std::shared_ptr <protocol::TMValidation> const& m)
 {
     auto const closeTime = app_.timeKeeper().closeTime();
 
-    if (m->has_hops() && ! slot_->cluster())
+    if (m->has_hops() && ! cluster())
         m->set_hops(m->hops() + 1);
 
     if (m->validation ().size () < 50)
